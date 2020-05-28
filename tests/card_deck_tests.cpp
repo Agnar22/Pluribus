@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include "../src/card_deck.h"
+#include "tests.h"
 
 
 TEST(CardDeck, PutBackAll) {
