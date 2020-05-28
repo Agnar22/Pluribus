@@ -47,7 +47,7 @@ unsigned long Holdem::CalculateHandStrength(unsigned long long player_mask) {
     // __builtin_ctzll = number of trailing 0s.
     // __builtin_popcountll = number of set bits.
 
-    // Rolay flush.
+    // Royal flush.
     if (__builtin_popcountll( 0x0001111100000000ULL & player_mask ) == 5 ||
         __builtin_popcountll( (0x0001111100000000ULL<<1) & player_mask ) == 5 ||
         __builtin_popcountll( (0x0001111100000000ULL<<2) & player_mask ) == 5 ||
