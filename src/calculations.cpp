@@ -41,6 +41,7 @@ unsigned long long compress_hand_lossless(unsigned long long hand) {
 namespace calculations {
 
     std::unordered_map< unsigned long long, int > suit_permutations;
+    std::unordered_map< int, std::vector<int> > hand_frequencies;
 
     void calculate_suit_permutations(unsigned long long current_hand, int upper_bound, int max_cards) {
         if (max_cards == 0) {
@@ -86,5 +87,29 @@ namespace calculations {
         return calculations::suit_permutations[compress_hand_lossless(hand)];
     }
 
+    void hand_frequency_(std::vector<int> &frequencies, unsigned long long current_hand, int upper_bound) {
+        if (__builtin_popcountll(current_hand) == 7) {
+            frequencies[Holdem::CalculateHandStrength(current_hand)>>26]++;
+        } else {
+            for (int x = 0; x < upper_bound; x++) {
+                if (current_hand & 1ULL<<x)
+                    continue;
+                calculations::hand_frequency_(frequencies, current_hand | 1ULL<<x, x);
+            }
+        }
+    }
+
+    std::vector<int> hand_frequency(unsigned long long player_mask) {
+        unsigned long long player_mask_compressed = compress_hand_lossless(player_mask);
+
+        if (calculations::hand_frequencies.find(player_mask_compressed) != calculations::hand_frequencies.end())
+            return calculations::hand_frequencies[player_mask_compressed];
+
+        std::vector<int> frequencies(10,0);
+        calculations::hand_frequency_(frequencies, player_mask_compressed, 52);
+
+        calculations::hand_frequencies[player_mask_compressed] = frequencies;
+        return frequencies;
+    }
 } // namespace calculations
 

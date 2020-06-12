@@ -20,6 +20,8 @@ namespace calculations {
     extern std::unordered_map< int, std::vector<int> > hand_frequencies;
     void load_suit_permutations();
     int num_suit_permutations(unsigned long long);
+    void hand_frequency_(std::vector<int>&, unsigned long long, int);
+    std::vector<int> hand_frequency(unsigned long long);
 
 }
 
