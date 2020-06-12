@@ -22,6 +22,8 @@ namespace calculations {
     int num_suit_permutations(unsigned long long);
     void hand_frequency_(std::vector<int>&, unsigned long long, int);
     std::vector<int> hand_frequency(unsigned long long);
+    void headsup_tabled_outcomes(unsigned long long, unsigned long long, unsigned long long, int, std::vector<unsigned long long>&);
+    std::vector<unsigned long> headsup_outcomes(unsigned long long, unsigned long long);
 
 }
 

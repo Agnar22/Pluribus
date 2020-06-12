@@ -111,5 +111,36 @@ namespace calculations {
         calculations::hand_frequencies[player_mask_compressed] = frequencies;
         return frequencies;
     }
+
+    void headsup_tabled_outcomes(unsigned long long player_cards, unsigned long long opponent_cards, unsigned long long board_cards, int upper_bound, std::vector<unsigned long> &outcomes) {
+        if (__builtin_popcountll(board_cards) == 5) {
+            unsigned long our_strength = Holdem::CalculateHandStrength(player_cards | board_cards);
+            unsigned long opponent_strength = Holdem::CalculateHandStrength(opponent_cards | board_cards);
+            if (our_strength > opponent_strength)
+                outcomes[2]++;
+            else if (our_strength == opponent_strength)
+                outcomes[1]++;
+            else
+                outcomes[0]++;
+        } else {
+            for (int x = 0; x < upper_bound; ++x) {
+                if ( (player_cards | opponent_cards | board_cards) & (1ULL<<x) )
+                    continue;
+                headsup_tabled_outcomes(player_cards, opponent_cards, board_cards | (1ULL<<x), x, outcomes);
+            }
+        }
+    }
+
+    std::vector<unsigned long> headsup_outcomes(unsigned long long player_cards, unsigned long long board_cards) {
+        std::vector<unsigned long> outcomes(3,0);
+        for (int x = 0; x < 52; ++x) {
+            for (int y = 0; y < x; ++y) {
+                if ( (player_cards | board_cards) & ((1ULL<<x) | (1ULL<<y)) )
+                    continue;
+                headsup_tabled_outcomes(player_cards, (1ULL<<x) | (1ULL<<y), board_cards, 52, outcomes);
+            }
+        }
+        return outcomes;
+    }
 } // namespace calculations
 
