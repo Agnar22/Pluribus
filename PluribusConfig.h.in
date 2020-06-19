@@ -1,0 +1,3 @@
+// The configured options and settins for Pluribus
+#define Pluribus_VERSION_MAJOR @Pluribus_VERSION_MAJOR@
+#define Pluribus_VERSION_MINOR @Pluribus_VERSION_MINOR@
