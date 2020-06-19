@@ -1,5 +1,3 @@
-#include "../src/holdem.h"
-#include "../src/card_deck.h"
 #include "tests.h"
 
 TEST(CalculateHandStrength, RoyalFlush) {
