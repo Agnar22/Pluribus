@@ -1,10 +1,10 @@
 #ifndef TESTS_H
 #define TESTS_H
 
-#include <gtest/gtest.h>
 #include <sstream>
 #include <string>
 #include <map>
+#include "gtest/gtest.h"
 #include "../src/card_deck.h"
 #include "../src/holdem.h"
 
