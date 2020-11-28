@@ -19,7 +19,7 @@ jobs:
       
     - name: Boost
       # Install dependencies.
-      run: sudo apt-get update && sudo apt-get install -yq libboost1.65-dev && sudo apt install libboost-dev-all
+      run: sudo apt-get update && sudo apt-get install -yq libboost1.65-all-dev
       
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
