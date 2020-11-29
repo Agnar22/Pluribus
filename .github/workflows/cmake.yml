@@ -1,5 +1,5 @@
 
-name: build and run tests
+name: build-and-run-tests
 on: [push]
 jobs:
   build:
