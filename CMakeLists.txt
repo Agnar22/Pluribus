@@ -18,6 +18,6 @@ elseif (NOT Boost_FOUND)
     error("Boost not found.")
 endif()
 
-add_subdirectory(libs/googletest)
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(libs/googletest)
