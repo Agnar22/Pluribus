@@ -7,11 +7,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     # install dependencies
-    - name: boost
+    - name: Boost
       run: sudo apt-get update && sudo apt-get install -yq libboost1.65-all-dev
+    - name: Gtest
+      run: git clone git@github.com:google/googletest.git libs/
     # build project
-    - name: cmake
-      run: cmake .
     - name: cmake make
       run: cmake --build build/ --target all
     # run tests
