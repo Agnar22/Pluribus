@@ -53,7 +53,7 @@ TEST(Calculations, TotalSuitPermutations) {
     calculations::load_suit_permutations();
 
     std::vector<int> compression_permutations = { 0, 0, 0, 0, 0, 0, 0 };
-    std::vector<int> ans = { 51, 1326, 22100, 270725, 2598960, 20358520, 133784560 };
+    std::vector<int> ans = { 52, 1326, 22100, 270725, 2598960, 20358520, 133784560 };
 
     for (auto hand : calculations::suit_permutations) {
         compression_permutations[__builtin_popcountll(hand.first) - 1] += calculations::num_suit_permutations(hand.first);
