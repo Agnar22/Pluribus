@@ -10,8 +10,12 @@ jobs:
     - name: Boost
       run: sudo apt-get update && sudo apt-get install -yq libboost1.65-all-dev
     # build project
-    - name: cmake make
-      run: cmake --build build/ --target all
+    - name: CMake
+      working-directory: ${{runner.workspace}}/build
+      run: cmake ..
+    - name: Make
+      working-directory: ${{runner.workspace}}/build
+      run: make
     # run tests
-    - name: run tests
+    - name: Tests
       run: build/test/do_tests
