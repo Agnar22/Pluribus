@@ -6,17 +6,17 @@
 # Plan
  - [ ] MCCFR
  - [ ] Kuhn poker
-  - [ ] Environment
-  - [ ] Training
+   - [ ] Environment
+   - [ ] Training
  - [ ] Leduc Hold'em
-  - [ ] Environment
-  - [ ] Training
+   - [ ] Environment
+   - [ ] Training
  - [ ] No Limit texas Hold'em 2 player
-  - [ ] Environment
-  - [ ] Training
+   - [ ] Environment
+   - [ ] Training
  - [ ] No Limit texas Hold'em
-  - [ ] Environment
-  - [ ] Training
+   - [ ] Environment
+   - [ ] Training
  
 
 
