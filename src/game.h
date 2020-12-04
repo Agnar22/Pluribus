@@ -7,23 +7,23 @@
 
 class Game {
     public:
-        std::set<std::string> get_encountered_infosets(int);
-        void execute(std::string);
-        void undo();
-        //GameState get_state();
-        bool is_finished();
-        bool is_player_in_hand(int);
-        bool is_chance_node();
-        int betting_round();
-        std::string sample_action();
-        bool is_player_to_move(int);
-        std::vector<std::string> get_actions();
-        std::string get_random_action();
-        std::string get_infoset(int);
-        std::string get_current_infoset();
-        float get_outcome_for_player(int);
-        static std::vector<std::string> get_actions_from_infoset(std::string);
-        std::vector<int> get_players();
+        virtual std::set<std::string> get_encountered_infosets(int);
+        virtual void execute(std::string);
+        virtual void undo();
+        virtual bool is_finished();
+        virtual bool is_player_in_hand(int);
+        virtual bool is_chance_node();
+        virtual int betting_round();
+        virtual std::string sample_action();
+        virtual bool is_player_to_move(int);
+        virtual int get_player_to_move();
+        virtual std::vector<std::string> get_actions();
+        virtual std::string get_random_action();
+        virtual std::string get_infoset(int);
+        virtual std::string get_current_infoset();
+        virtual float get_outcome_for_player(int);
+        virtual std::vector<std::string> get_actions_from_infoset(std::string);
+        virtual std::vector<int> get_players();
 };
 
 #endif
