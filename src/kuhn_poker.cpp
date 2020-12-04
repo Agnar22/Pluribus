@@ -10,15 +10,16 @@ class KuhnPoker: public Game {
 
     public:
         int player_to_move = 0;
-        //float money[2] = {0.0f, 0.0f};
         float money_in_hand[2] = {0.0f, 0.0f};
         bool has_folded[2] = {false, false};
-        char card_for_player[2] = {'-','-'};
-        //char cards[3] = {'A', 'K', 'Q'};
+        char card_for_player[2];
         std::vector<std::string> history;
         std::vector<std::set<std::string>> encountered_infosets;
 
-        KuhnPoker(){initialize_hand();}
+        KuhnPoker() {
+            encountered_infosets = {std::set<std::string>(), std::set<std::string>()};
+            initialize_hand();
+        }
 
         void initialize_hand() {
             money_in_hand[0] = 1.0f;
@@ -36,8 +37,7 @@ class KuhnPoker: public Game {
         void reset_game() {
             initialize_hand();
 
-            //money[0] = 0.0f;
-            //money[1] = 0.0f;
+
         }
 
         bool is_finished() {
@@ -193,20 +193,4 @@ int main(){
     play_khun_poker(10000, false);
     auto stop = std::chrono::high_resolution_clock::now();
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << std::endl;
-    //while (true) {
-    //    std::cout << std::endl << std::endl << "Starting game" << std::endl;
-    //    std::cout << game.card_for_player[0] << " " << game.card_for_player[1] << std::endl;
-    //    while (!game.is_finished()) {
-    //        std::cout << "Possible actions: ";
-    //        for (std::string action:game.get_actions())
-    //            std::cout << action << " ";
-    //        std::cout << std::endl << "Move:";
-    //        std::string move;
-    //        std::cin >> move;
-    //        game.execute(move);
-    //        std::cout << "In for: " << game.money_in_hand[0] << " " << game.money_in_hand[1] << std::endl;
-    //    }
-    //    std::cout << "Game over. Outcome: " << game.get_outcome_for_player(0) << " " << game.get_outcome_for_player(1) << std::endl;
-    //    game.initialize_hand();
-    //}
 }
