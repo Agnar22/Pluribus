@@ -204,6 +204,7 @@ void play_khun_poker(int iterations, bool verbose){
     std::cout << "Won: " << num_won << std::endl;
 }
 
+/*
 int main(){
     KuhnPoker game;
     
@@ -212,3 +213,4 @@ int main(){
     auto stop = std::chrono::high_resolution_clock::now();
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << std::endl;
 }
+*/

@@ -1,15 +1,18 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <chrono>
 #include <vector>
 #include <string>
 #include <set>
+#include <iostream>
 
 class Game {
     public:
         virtual std::set<std::string> get_encountered_infosets(int) {};
         virtual void execute(std::string) {};
         virtual void undo() {};
+        virtual void reset_game() {};
         virtual bool is_finished() {};
         virtual bool is_player_in_hand(int) {};
         virtual bool is_chance_node() {};
