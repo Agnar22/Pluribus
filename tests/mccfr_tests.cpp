@@ -6,7 +6,7 @@
 
 TEST(MCCFR, KuhnPokerOptimalStrategy) {
     // The optimal strategy for Kuhn Poker is described here: https://en.wikipedia.org/wiki/Kuhn_poker#Optimal_strategy
-    float error_treshold = 0.01f;
+    float error_treshold = 0.02f;
     KuhnPoker kuhn_poker;
 
     mccfr::mccfr_p(100000, 1, 20000, 1000, 20, kuhn_poker);
