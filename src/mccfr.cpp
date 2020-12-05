@@ -12,6 +12,20 @@ namespace mccfr {
 
     std::unordered_map<std::string, std::unordered_map<std::string, float>> regret, strategy;
 
+    std::unordered_map<std::string, std::unordered_map<std::string, float>> calculate_probabilities() {
+        std::unordered_map<std::string, std::unordered_map<std::string, float>> probabilities;
+        for (auto const [infoset, infoset_regret]:regret) {
+            float sum = 0;
+            for (auto const [action, action_regret]:infoset_regret) {
+                sum += strategy[infoset][action];
+            }
+            for (auto const [action, action_regret]:infoset_regret) {
+                probabilities[infoset][action] = strategy[infoset][action] / sum;
+            }
+        }
+        return probabilities;
+    };
+
     std::string sample_action(std::unordered_map<std::string, float>& temp_strategy) {
         float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
         float r_copy = r;
@@ -163,6 +177,9 @@ void print_strategy() {
     }
 }
 
+
+
+/*
 int main() {
     KuhnPoker khun_poker;
 
@@ -172,3 +189,4 @@ int main() {
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << std::endl;
     print_strategy();
 }
+*/
