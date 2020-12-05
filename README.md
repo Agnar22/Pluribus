@@ -4,10 +4,10 @@
 [![build-and-run-tests](https://github.com/Agnar22/Pluribus/workflows/build-and-run-tests/badge.svg)](https://github.com/Agnar22/Pluribus/actions)
 
 # Roadmap
- - [ ] MCCFR
- - [ ] Kuhn poker
-   - [ ] Environment
-   - [ ] Training
+ - [X] MCCFR
+ - [X] Kuhn poker
+   - [X] Environment
+   - [X] Training
  - [ ] Leduc Hold'em
    - [ ] Environment
    - [ ] Training
