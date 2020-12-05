@@ -19,4 +19,6 @@
    - [ ] Training
  
 
-
+# Resources
+ - [The original paper about Pluribus](https://www.cs.cmu.edu/~noamb/papers/19-Science-Superhuman.pdf)
+ - [Supplementary material to the paper](https://science.sciencemag.org/content/sci/suppl/2019/07/10/science.aay2400.DC1/aay2400-Brown-SM.pdf)
