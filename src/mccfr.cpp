@@ -111,7 +111,7 @@ namespace mccfr {
             std::string action = sample_action(curr_strategy);
 
             game.execute(action);
-            float outcome = traverse_mccfr(game, player,  prune);
+            float outcome = traverse_mccfr(game, player, prune);
             game.undo();
             return outcome;
         }
