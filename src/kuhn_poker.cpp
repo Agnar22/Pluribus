@@ -108,7 +108,9 @@ std::string KuhnPoker::get_random_action() {
 }
 
 std::string KuhnPoker::get_infoset(int player) {
-    return "";
+    std::string concat_hist;
+    for (const auto &piece : history) concat_hist += piece;
+    return std::to_string(player) + "|" + std::string(1, card_for_player[player]) + "|" + (has_folded[0]?"t":"f") + "|" + (has_folded[1]?"t":"f") + "|" + concat_hist;
 }
 
 std::string KuhnPoker::get_current_infoset() {
