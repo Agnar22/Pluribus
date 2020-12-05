@@ -64,8 +64,8 @@ std::set<std::string> KuhnPoker::get_encountered_infosets(int player) {
 }
 
 void KuhnPoker::execute(std::string action) {
-    history.push_back(action);
     encountered_infosets[player_to_move].insert(get_infoset(player_to_move));
+    history.push_back(action);
     int opponent = (player_to_move+1)%2;
     if (action=="f")
         has_folded[player_to_move]=true;
@@ -94,7 +94,9 @@ bool KuhnPoker::is_player_to_move(int player) {
 std::vector<std::string> KuhnPoker::get_actions() {
     if (has_folded[0] || has_folded[1])
         return std::vector<std::string>();
-    std::vector<std::string> actions{"f", "c"};
+    std::vector<std::string> actions{"c"};
+    if (history.size()>0 && history.back() == "r")
+        actions.push_back("f");
     if (std::find(history.begin(), history.end(), "r") == history.end())
         actions.push_back("r");
     return actions;
@@ -129,7 +131,9 @@ std::vector<std::string> KuhnPoker::get_actions_from_infoset(std::string infoset
     if (infoset.back()=='f') {
         return std::vector<std::string>();
     }
-    std::vector<std::string> actions{"f", "c"};
+    std::vector<std::string> actions{"c"};
+    if (infoset.back()=='r')
+        actions.push_back("f");
     if (infoset.back()!='r')
         actions.push_back("r");
     return actions;
