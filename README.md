@@ -5,12 +5,13 @@
 
 # Roadmap
  - [X] MCCFR
- - [X] Kuhn poker
+ - [X] Two player Kuhn poker
    - [X] Environment
    - [X] Training
- - [ ] Leduc Hold'em
+ - [ ] Three player Kuhn poker
    - [ ] Environment
    - [ ] Training
+ - [ ] Real-time search
  - [ ] No Limit texas Hold'em 2 player
    - [ ] Environment
    - [ ] Training
