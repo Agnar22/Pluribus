@@ -3,13 +3,20 @@
 #include "../src/kuhn_poker.h"
 #include "../src/mccfr.cpp"
 
+struct MCCFRTest: public testing::Test {
+    MCCFRTest() {}
+    ~MCCFRTest() {
+        mccfr::regret.clear();
+        mccfr::strategy.clear();
+    };
+};
 
-TEST(MCCFR, KuhnPokerOptimalStrategy) {
-    // The optimal strategy for Kuhn Poker is described here: https://en.wikipedia.org/wiki/Kuhn_poker#Optimal_strategy
+TEST_F(MCCFRTest, TwoPlayerKuhnPokerOptimalStrategy) {
+    // The optimal strategy for two player Kuhn poker is described here: https://en.wikipedia.org/wiki/Kuhn_poker#Optimal_strategy
     float error_treshold = 0.02f;
-    KuhnPoker kuhn_poker;
+    KuhnPoker kuhn_poker(2);
 
-    mccfr::mccfr_p(100000, 1, 20000, 1000, 20, kuhn_poker);
+    mccfr::mccfr_p(100000, 20, 20000, 1000, 20, kuhn_poker);
     auto strategy = mccfr::calculate_probabilities();
     float strategy_alpha = strategy["0|Q|"]["r"];
 
