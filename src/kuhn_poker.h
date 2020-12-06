@@ -2,19 +2,23 @@
 #define KUHN_POKER_H
 
 #include "game.h"
+#include <unordered_map>
 
 
 class KuhnPoker: public Game {
 
     public:
         int player_to_move;
-        float money_in_hand[2];
-        bool has_folded[2];
-        char card_for_player[2];
+        int players;
+        std::vector<float> money_in_hand;
+        std::vector<bool> has_folded;
+        std::vector<char> card_for_player;
+        std::vector<char> cards;
         std::vector<std::string> history;
         std::vector<std::set<std::string>> encountered_infosets;
 
         KuhnPoker();
+        KuhnPoker(int);
         void initialize_hand();
         void reset_game();
         bool is_finished();
@@ -36,8 +40,10 @@ class KuhnPoker: public Game {
         std::vector<int> get_players();
 
     private:
+        char find_best_remaining_hand();
         std::pair<char, char> card_combination_to_chars(int);
         void draw_cards();
+        std::unordered_map<std::string, std::vector<std::string>> actions_for_infoset;
 };
 
 

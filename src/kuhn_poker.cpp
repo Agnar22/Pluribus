@@ -2,25 +2,31 @@
 #include <string>
 #include <utility>
 #include <algorithm>
+#include <numeric>
 #include <set>
 #include <iostream>
 #include <chrono>
 
 
 KuhnPoker::KuhnPoker() {
-    encountered_infosets = {std::set<std::string>(), std::set<std::string>()};
+    KuhnPoker(2);
+}
+
+KuhnPoker::KuhnPoker(int num_players) {
+    assertm(num_players == 2 || num_players == 3, "There are two or three players.");
+    players=num_players;
+    encountered_infosets.resize(num_players, std::set<std::string>());
+    card_for_player.resize(num_players);
+    cards = {'A', 'K', 'Q'};
+    if (num_players==3)
+        cards.push_back('J');
     initialize_hand();
 }
 
 void KuhnPoker::initialize_hand() {
-    money_in_hand[0] = 1.0f;
-    money_in_hand[1] = 1.0f;
-
-    has_folded[0] = false;
-    has_folded[1] = false;
-
+    money_in_hand.assign(players, 1.0f);
+    has_folded.assign(players, false);
     history.clear();
-
     player_to_move = 0;
     draw_cards();
 }
@@ -30,11 +36,11 @@ void KuhnPoker::reset_game() {
 }
 
 bool KuhnPoker::is_finished() {
-    if (has_folded[0] || has_folded[1])
+    if (std::accumulate(has_folded.begin(), has_folded.end(),0) == players - 1)
         return true;
-    if (history.size()>=2 &&
-        ((history.end()[-2]=="r" && history.back()=="c") ||
-        (history.end()[-2]=="c" && history.back()=="c")))
+    if (history.size()>=players && history[history.size()-players] == "r")
+        return true;
+    if (history.size()>=players && std::find(history.begin(), history.end(), "r") == history.end())
         return true;
     return false;
 }
@@ -66,18 +72,18 @@ std::set<std::string> KuhnPoker::get_encountered_infosets(int player) {
 void KuhnPoker::execute(std::string action) {
     encountered_infosets[player_to_move].insert(get_infoset(player_to_move));
     history.push_back(action);
-    int opponent = (player_to_move+1)%2;
     if (action=="f")
         has_folded[player_to_move]=true;
-    else if (action=="c")
-        money_in_hand[player_to_move] = money_in_hand[opponent];
+    else if (action=="c") {
+        money_in_hand[player_to_move] = *std::max_element(money_in_hand.begin(), money_in_hand.end());
+    }
     else
         money_in_hand[player_to_move]+=1;
-    player_to_move = opponent;
+    player_to_move = (player_to_move+1)%players;
 }
 
 void KuhnPoker::undo() {
-    player_to_move=(player_to_move+1)%2;
+    player_to_move=(player_to_move-1+players)%players;
     std::string last_action = history.back();
     history.pop_back();
     if (last_action == "f") {
@@ -92,13 +98,13 @@ bool KuhnPoker::is_player_to_move(int player) {
 }
 
 std::vector<std::string> KuhnPoker::get_actions() {
-    if (has_folded[0] || has_folded[1])
+    if (std::accumulate(has_folded.begin(), has_folded.end(),0) == players - 1)
         return std::vector<std::string>();
     std::vector<std::string> actions{"c"};
-    if (history.size()>0 && history.back() == "r")
-        actions.push_back("f");
     if (std::find(history.begin(), history.end(), "r") == history.end())
         actions.push_back("r");
+    else
+        actions.push_back("f");
     return actions;
 }
 
@@ -110,7 +116,10 @@ std::string KuhnPoker::get_random_action() {
 std::string KuhnPoker::get_infoset(int player) {
     std::string concat_hist;
     for (const auto &piece : history) concat_hist += piece;
-    return std::to_string(player) + "|" + std::string(1, card_for_player[player]) + "|" + concat_hist;
+    std::string infoset = std::to_string(player) + "|" + std::string(1, card_for_player[player]) + "|" + concat_hist;
+    if (actions_for_infoset.find(infoset) == actions_for_infoset.end())
+        actions_for_infoset[infoset] = get_actions();
+    return infoset;
 }
 
 std::string KuhnPoker::get_current_infoset() {
@@ -120,58 +129,45 @@ std::string KuhnPoker::get_current_infoset() {
 float KuhnPoker::get_outcome_for_player(int player) {
     if (has_folded[player])
         return -money_in_hand[player];
-    int opponent = (player+1)%2;
-    if (has_folded[opponent])
-        return money_in_hand[opponent];
-    if (card_for_player[player] != 'K') {
-        return card_for_player[player] == 'A' ? money_in_hand[opponent] : -money_in_hand[player];
+    if (std::accumulate(has_folded.begin(), has_folded.end(),0) == players - 1)
+        return std::accumulate(money_in_hand.begin(), money_in_hand.end(),0.0f) - money_in_hand[player];
+    if (card_for_player[player] != find_best_remaining_hand()) {
+        return -money_in_hand[player];
     }
-    return card_for_player[opponent] == 'A' ? -money_in_hand[player] : money_in_hand[opponent];
+    return std::accumulate(money_in_hand.begin(), money_in_hand.end(),0.0f) - money_in_hand[player];
 };
 
 std::vector<std::string> KuhnPoker::get_actions_from_infoset(std::string infoset) {
-    if (infoset.back()=='f') {
-        return std::vector<std::string>();
-    }
-    std::vector<std::string> actions{"c"};
-    if (infoset.back()=='r')
-        actions.push_back("f");
-    if (infoset.back()!='r')
-        actions.push_back("r");
-    return actions;
+    return actions_for_infoset[infoset];
 }
 
 std::vector<int> KuhnPoker::get_players() {
-    return std::vector<int>{0,1};
+    std::vector<int> all_players(players);
+    for (int x=0; x<players; ++x)
+        all_players[x] = x;
+    return all_players;
 }
 
-std::pair<char, char> KuhnPoker::card_combination_to_chars(int card_combination) {
-    //               Player 2
-    //              A   K   Q
-    //          A   -   0   1
-    // Player 1 K   3   -   2
-    //          Q   4   5   -
-    //
-    // I.e Player 1 wins if number<=2
-
-    char one, two;
-    if (card_combination < 2)
-        one = 'A';
-    else
-        one = card_combination < 4 ? 'K' : 'Q';
-    if (card_combination==0 || card_combination==5)
-        two = 'K';
-    else
-        two = card_combination > 2 ? 'A' : 'Q';
-    return std::make_pair(one, two);
+char KuhnPoker::find_best_remaining_hand() {
+    int best_card_pos = -1;
+    for (int player:get_players()) {
+        if (!is_player_in_hand(player))
+            continue;
+        int curr_card_pos = std::find(cards.begin(), cards.end(), card_for_player[player]) - cards.begin();
+        // Expoiting the fact that cards are in descending order.
+        best_card_pos = (best_card_pos==-1) ? curr_card_pos:std::min(curr_card_pos, best_card_pos);
+    }
+    return cards[best_card_pos];
 }
 
 void KuhnPoker::draw_cards() {
-    std::pair<char, char> dCards = card_combination_to_chars(rand()%6);
-    card_for_player[0] = dCards.first;
-    card_for_player[1] = dCards.second;
+    std::vector<char> remaining_cards = cards;
+    for (int x=0; x<players; ++x) {
+        int card_pos = rand()%remaining_cards.size();
+        card_for_player[x] = remaining_cards[card_pos];
+        remaining_cards.erase(remaining_cards.begin()+card_pos);
+    }
 }
-
 
 void play_khun_poker(int iterations, bool verbose){
     KuhnPoker game;
