@@ -6,7 +6,9 @@
 #include <set>
 #include <iostream>
 #include <chrono>
+#include <cassert>
 
+#define assertm(exp, msg) assert(((void)msg, exp))
 
 KuhnPoker::KuhnPoker() {
     KuhnPoker(2);
@@ -127,6 +129,7 @@ std::string KuhnPoker::get_current_infoset() {
 }
 
 float KuhnPoker::get_outcome_for_player(int player) {
+    assertm(is_finished(), "The game is finished.");
     if (has_folded[player])
         return -money_in_hand[player];
     if (std::accumulate(has_folded.begin(), has_folded.end(),0) == players - 1)
@@ -138,6 +141,7 @@ float KuhnPoker::get_outcome_for_player(int player) {
 };
 
 std::vector<std::string> KuhnPoker::get_actions_from_infoset(std::string infoset) {
+    assertm(actions_for_infoset.find(infoset) != actions_for_infoset.end(), "Infoset is encountered before.");
     return actions_for_infoset[infoset];
 }
 
