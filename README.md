@@ -8,9 +8,9 @@
  - [X] Two player Kuhn poker
    - [X] Environment
    - [X] Training
- - [ ] Three player Kuhn poker
-   - [ ] Environment
-   - [ ] Training
+ - [X] Three player Kuhn poker
+   - [X] Environment
+   - [X] Training
  - [ ] Real-time search
  - [ ] No Limit texas Hold'em 2 player
    - [ ] Environment
