@@ -4,7 +4,9 @@
 #include "../src/mccfr.cpp"
 
 struct MCCFRTest: public testing::Test {
-    MCCFRTest() {}
+    MCCFRTest() {
+        srand(42);
+    };
     ~MCCFRTest() {
         mccfr::regret.clear();
         mccfr::strategy.clear();
