@@ -6,6 +6,72 @@
 #include <string>
 #include <set>
 #include <iostream>
+#include <cstdint>
+#include <unordered_map>
+
+constexpr int MAX_MOVE_SIZE = 2;
+constexpr uint32_t MOVE_MASK = 3;
+
+enum class Cards : char {
+    A, K, Q, J
+};
+
+enum class Move : uint32_t {
+    NONE=0, F, C, R
+};
+
+extern std::unordered_map<char, Move> char_to_move;
+
+struct History {
+    uint32_t history;
+    int length;
+
+    History() : history{0}, length{0}{};
+
+    History(std::string& history) : length{0} {
+        for (char& move:history) {
+            this->history = (this->history << MAX_MOVE_SIZE) + static_cast<uint32_t>(char_to_move[move]);
+            length++;
+        }
+    };
+
+    History(std::string&& history) : length{0} {
+        for (char& move:history) {
+            this->history = (this->history << MAX_MOVE_SIZE) + static_cast<uint32_t>(char_to_move[move]);
+            length++;
+        }
+    };
+
+    inline void clear() {
+        history=0;
+        length=0;
+    };
+
+    inline int get_length() {
+        return this->length;
+    };
+
+    History operator--(int times) {
+        int dec = times + 1;
+        history = history >> (MAX_MOVE_SIZE * dec);
+        length-=dec;
+        return *this;
+    };
+
+    History& operator+=(const Move& move) {
+        history = ((history << MAX_MOVE_SIZE) | static_cast<uint32_t>(move));
+        length++;
+        return *this;
+    };
+
+    Move operator[](const int pos) {
+        if (pos>length)
+            return Move::NONE;
+        return static_cast<Move>(history >> (MAX_MOVE_SIZE * pos) & MOVE_MASK);
+    };
+};
+
+
 
 class Game {
     public:
