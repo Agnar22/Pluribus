@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "hand_test_helper.h"
 
 TEST(CalculateHandStrength, RoyalFlush) {
     ul c = hand_test::find_and_check_strength(Wincondition::royal_flush, "c2 c10 cj cq ck ca sa", Card::ten, Card::ten, false);

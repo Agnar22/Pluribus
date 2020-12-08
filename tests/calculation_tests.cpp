@@ -1,5 +1,5 @@
 #include "../src/calculations.h"
-#include "tests.h"
+#include "hand_test_helper.h"
 
 
 TEST(Calculations, LosslessCompression) {

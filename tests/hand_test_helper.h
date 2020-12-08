@@ -1,5 +1,5 @@
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef HAND_TEST_HELPER_H
+#define HAND_TEST_HELPER_H
 
 #include <sstream>
 #include <string>

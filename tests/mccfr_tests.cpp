@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "gtest/gtest.h"
 #include "../src/game.h"
 #include "../src/kuhn_poker.h"
 #include "../src/mccfr.cpp"

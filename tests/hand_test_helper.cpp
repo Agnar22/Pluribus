@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "hand_test_helper.h"
 
 namespace hand_test {
 
