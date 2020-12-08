@@ -60,7 +60,7 @@ namespace calculations {
     }
 
     void load_suit_permutations() {
-        std::string file_name = "../files/suit_permutations.txt";
+        std::string file_name = "../../files/suit_permutations.txt";
 
         if (!calculations::suit_permutations.empty())
             return;
