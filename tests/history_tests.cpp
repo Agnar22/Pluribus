@@ -70,3 +70,18 @@ TEST(History, Decrement) {
     ASSERT_EQ(hist[0], Move::R);
 }
 
+TEST(History, Assertions) {
+    // The length of the string is 17, as the maximum length allowed is 16.
+    std::string moves = "CCCCCCCCCCCCCCCCC";
+    ASSERT_DEATH(new History(moves), "Not overflow.");
+    ASSERT_DEATH(new History("CCCCCCCCCCCCCCCCC"), "Not overflow.");
+
+    History hist;
+    ASSERT_DEATH(hist--, "Not underflow.");
+    ASSERT_DEATH(hist[-1], "Position is positive.");
+    ASSERT_DEATH(hist[0], "Valid position.");
+
+    for (int x=0; x<16; ++x)
+        hist+=Move::C;
+    ASSERT_DEATH(hist+=Move::C, "Not overflow.");
+}

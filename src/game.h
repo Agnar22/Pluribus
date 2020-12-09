@@ -8,6 +8,9 @@
 #include <iostream>
 #include <cstdint>
 #include <unordered_map>
+#include <cassert>
+
+#define assertm(exp, msg) assert(((void)msg, exp))
 
 constexpr int MAX_MOVE_SIZE = 2;
 constexpr uint32_t MOVE_MASK = 3;
@@ -33,6 +36,7 @@ struct History {
             this->history = (this->history << MAX_MOVE_SIZE) + static_cast<uint32_t>(char_to_move[move]);
             length++;
         }
+        assertm(length <= 8*sizeof(this->history) / MAX_MOVE_SIZE, "Not overflow.");
     };
 
     History(std::string&& history) : length{0} {
@@ -40,6 +44,7 @@ struct History {
             this->history = (this->history << MAX_MOVE_SIZE) + static_cast<uint32_t>(char_to_move[move]);
             length++;
         }
+        assertm(length <= 8*sizeof(this->history) / MAX_MOVE_SIZE, "Not overflow.");
     };
 
     inline void clear() {
@@ -52,6 +57,7 @@ struct History {
     };
 
     History operator--(int times) {
+        assertm(length > 0, "Not underflow.");
         int dec = times + 1;
         history = history >> (MAX_MOVE_SIZE * dec);
         length-=dec;
@@ -59,14 +65,15 @@ struct History {
     };
 
     History& operator+=(const Move& move) {
+        assertm(length < 8*sizeof(history) / MAX_MOVE_SIZE, "Not overflow.");
         history = ((history << MAX_MOVE_SIZE) | static_cast<uint32_t>(move));
         length++;
         return *this;
     };
 
     Move operator[](const int pos) {
-        if (pos>length)
-            return Move::NONE;
+        assertm(pos >= 0, "Position is positive.");
+        assertm(length > pos, "Valid position.");
         return static_cast<Move>(history >> (MAX_MOVE_SIZE * pos) & MOVE_MASK);
     };
 };
