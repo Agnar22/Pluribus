@@ -56,11 +56,11 @@ TEST_F(MCCFRTest, TwoPlayerKuhnPokerOptimalStrategy) {
 TEST_F(MCCFRTest, ThreePlayerKuhnPokerOptimalStrategy) {
     // The optimal strategy for three player Kuhn poker is described here: https://poker.cs.ualberta.ca/publications/AAMAS13-3pkuhn.pdf
     // The variables are using the notation from the paper.
-    float error_treshold = 0.02f;
+    float error_treshold = 0.03f;
     KuhnPoker kuhn_poker(3);
 
 
-    mccfr::mccfr_p(1000000, 1000, 20000000, 20000000, 10000000, kuhn_poker);
+    mccfr::mccfr_p(3000000, 1000, 20000000, 20000000, 10000000, kuhn_poker);
     auto strategy = mccfr::calculate_probabilities();
 
     std::vector<Cards> cards = {Cards::J, Cards::Q, Cards::K, Cards::A};
