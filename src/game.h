@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdint>
 #include <unordered_map>
+#include <bits/stdc++.h>
 #include <cassert>
 
 #define assertm(exp, msg) assert(((void)msg, exp))
@@ -16,6 +17,7 @@ constexpr int MAX_MOVE_SIZE = 2;
 constexpr int MAX_CARD_SIZE = 3;
 constexpr int MAX_MOVES = 2;
 constexpr uint32_t MOVE_MASK = 3;
+constexpr uint32_t CARDS_MASK = 7;
 
 enum class Cards : char {
     A, K, Q, J, NONE
@@ -26,6 +28,21 @@ enum class Move : uint32_t {
 };
 
 extern std::unordered_map<char, Move> char_to_move;
+extern std::unordered_map<Move, char> move_to_char;
+extern std::unordered_map<Cards, char> cards_to_char;
+
+extern std::string infoset_to_string(uint64_t infoset);
+/*
+std::string infoset_to_string(uint64_t infoset) {
+    int pos = 0;
+    std::string readable_infoset;
+    while (infoset & (MOVE_MASK << (MAX_CARD_SIZE + pos * MAX_MOVE_SIZE)))
+        readable_infoset += move_to_char[static_cast<Move>(infoset & MOVE_MASK)];
+    std::reverse(readable_infoset.begin(), readable_infoset.end());
+    readable_infoset += cards_to_char[static_cast<Cards>(infoset & MOVE_MASK)];
+    return readable_infoset;
+}
+*/
 
 struct History {
     uint32_t history;
@@ -94,7 +111,13 @@ struct History {
     };
 };
 
+inline uint64_t create_infoset(History& hist, Cards player_card) {
+    return (((uint64_t)hist.history) << MAX_CARD_SIZE) | (uint64_t)player_card;
+};
 
+inline uint64_t to_infoset(std::string history, Cards player_card) {
+    return (((uint64_t)History(history).history) << MAX_CARD_SIZE) | (uint64_t)player_card;
+};
 
 class Game {
     public:
