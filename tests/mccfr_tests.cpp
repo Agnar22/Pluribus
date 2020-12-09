@@ -22,6 +22,10 @@ TEST_F(MCCFRTest, TwoPlayerKuhnPokerOptimalStrategy) {
     auto strategy = mccfr::calculate_probabilities();
     float strategy_alpha = strategy["0|Q|"]["r"];
 
+    ASSERT_EQ(to_infoset("", Cards::K), 1);
+    ASSERT_EQ(to_infoset("R", Cards::K), 25);
+    ASSERT_EQ(infoset_to_string(to_infoset("R", Cards::K)), "RK");
+
     // QK
     ASSERT_LT(strategy_alpha - 1.0f/3.0f,  0.0f);
     ASSERT_LT(std::abs(strategy["1|K|r"]["f"] - 2.0f/3.0f), error_treshold);
