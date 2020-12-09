@@ -89,19 +89,10 @@ TEST_F(MCCFRTest, ThreePlayerKuhnPokerOptimalStrategy) {
     ASSERT_LT(std::abs(infosets["a33"] - 0.5f), error_treshold);
     ASSERT_LT(infosets["a34"], error_treshold);
     ASSERT_LT(infosets["a41"], error_treshold);
-
     // Nash equilibrium for b (player 1).
     float beta = std::max(infosets["b11"], infosets["b21"]);
-    if (infosets["c11"] <= error_treshold) {
-        ASSERT_LT(infosets["b11"], infosets["b21"] + error_treshold);
-        ASSERT_LT(infosets["b21"], 0.25f + error_treshold);
-    } else if (infosets["c11"] >= 0.5f - error_treshold){
-        ASSERT_LT(std::abs(infosets["b11"] - infosets["b21"]), error_treshold);
-        ASSERT_LT(infosets["b21"], 0.25 + error_treshold);
-    } else {
-        ASSERT_LT(infosets["b11"], 0.25f + error_treshold);
-        ASSERT_LT(infosets["b21"], std::min(infosets["b11"], 0.5f - 2.0f*infosets["b11"]) + error_treshold);
-    }
+    ASSERT_LT(infosets["b11"], 0.25f + error_treshold);
+    ASSERT_LT(infosets["b21"], std::min(infosets["b11"], 0.5f - 2.0f*infosets["b11"]) + error_treshold);
     ASSERT_LT(infosets["b22"], error_treshold);
     ASSERT_LT(infosets["b23"], std::max(0.0f, (infosets["b11"]-infosets["b21"]) / (2.0f*(1.0f-infosets["b21"]))) + error_treshold);
     ASSERT_LT(infosets["b31"], error_treshold);
