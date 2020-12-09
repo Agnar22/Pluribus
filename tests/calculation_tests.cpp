@@ -55,9 +55,8 @@ TEST(Calculations, TotalSuitPermutations) {
     std::vector<int> compression_permutations = { 0, 0, 0, 0, 0, 0, 0 };
     std::vector<int> ans = { 52, 1326, 22100, 270725, 2598960, 20358520, 133784560 };
 
-    for (auto hand : calculations::suit_permutations) {
+    for (auto hand : calculations::suit_permutations)
         compression_permutations[__builtin_popcountll(hand.first) - 1] += calculations::num_suit_permutations(hand.first);
-    }
 
     for (int pos = 0; pos < 7; ++pos)
         ASSERT_EQ(ans[pos], compression_permutations[pos]);

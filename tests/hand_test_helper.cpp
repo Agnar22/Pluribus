@@ -54,11 +54,11 @@ namespace hand_test {
         std::vector< std::pair<Card, Card> > card_hand;
         std::map< char, Card > suit = { {'c', Card::c}, {'h', Card::h}, {'s', Card::s}, {'d', Card::d} };
         std::map< std::string, Card > value = {
-                                                    {"2", Card::two}, {"3", Card::three}, {"4", Card::four}, {"5", Card::five},
-                                                    {"6", Card::six}, {"7", Card::seven}, {"8", Card::eight}, {"9", Card::nine},
-                                                    {"10", Card::ten}, {"j", Card::jack}, {"q", Card::queen}, {"k", Card::king},
-                                                    {"a", Card::ace}
-                                              };
+            {"2", Card::two}, {"3", Card::three}, {"4", Card::four}, {"5", Card::five},
+            {"6", Card::six}, {"7", Card::seven}, {"8", Card::eight}, {"9", Card::nine},
+            {"10", Card::ten}, {"j", Card::jack}, {"q", Card::queen}, {"k", Card::king},
+            {"a", Card::ace}
+        };
         std::string tmp;
         while (s >> tmp) {
             card_hand.push_back( std::make_pair(suit[tmp[0]], value[tmp.substr(1)]) );
@@ -148,5 +148,4 @@ namespace hand_test {
         else
             hand_frequency[int(Holdem::CalculateHandStrength(current_hand)>>26)]++;
     }
-
 }

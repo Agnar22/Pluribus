@@ -11,11 +11,11 @@ unsigned long long compress_hand_lossless(unsigned long long hand) {
     unsigned long long compressed_hand = 0ULL;
     unsigned long long value_mask = 0x0001111111111111;
     std::vector< std::pair<unsigned long long, int> > suit_value = {
-                                                        std::make_pair(0ULL, 0),
-                                                        std::make_pair(0ULL, 1),
-                                                        std::make_pair(0ULL, 2),
-                                                        std::make_pair(0ULL, 3)
-                                                        };
+        std::make_pair(0ULL, 0),
+        std::make_pair(0ULL, 1),
+        std::make_pair(0ULL, 2),
+        std::make_pair(0ULL, 3)
+    };
 
     for (int suit = 0; suit < 4; ++suit)
         suit_value[suit].first = (hand>>suit) & value_mask;
