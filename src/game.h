@@ -121,24 +121,24 @@ inline uint64_t to_infoset(std::string history, Cards player_card) {
 
 class Game {
     public:
-        virtual std::set<std::string> get_encountered_infosets(int) {};
-        virtual void execute(std::string) {};
+        virtual std::set<uint64_t> get_encountered_infosets(int) {};
+        virtual void execute(Move&) {};
         virtual void undo() {};
         virtual void reset_game() {};
         virtual bool is_finished() {};
         virtual bool is_player_in_hand(int) {};
         virtual bool is_chance_node() {};
         virtual int betting_round() {};
-        virtual std::string sample_action() {};
+        virtual Move sample_action() {};
         virtual bool is_player_to_move(int) {};
         virtual int get_player_to_move() {};
-        virtual std::vector<std::string> get_actions() {};
-        virtual std::string get_random_action() {};
-        virtual std::string get_infoset(int) {};
-        virtual std::string get_current_infoset() {};
+        virtual std::vector<Move>& get_actions(std::vector<Move>&) {};
+        virtual Move get_random_action() {};
+        virtual uint64_t get_infoset(int) {};
+        virtual uint64_t get_current_infoset() {};
         virtual float get_outcome_for_player(int) {};
-        virtual std::vector<std::string> get_actions_from_infoset(std::string) {};
-        virtual std::vector<int> get_players() {};
+        virtual std::vector<Move> get_actions_from_infoset(uint64_t) {};
+        virtual int get_num_players() {};
 };
 
 #endif

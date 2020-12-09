@@ -10,40 +10,39 @@ class KuhnPoker: public Game {
     public:
         int player_to_move;
         int players;
+        std::vector<Cards> cards;
         std::vector<float> money_in_hand;
         std::vector<bool> has_folded;
-        std::vector<char> card_for_player;
-        std::vector<char> cards;
-        std::vector<std::string> history;
-        std::vector<std::set<std::string>> encountered_infosets;
+        std::vector<Cards> card_for_player;
+        History history;
+        std::vector<std::set<uint64_t>> encountered_infosets;
 
         KuhnPoker();
         KuhnPoker(int);
         void initialize_hand();
         void reset_game();
         bool is_finished();
-        std::set<std::string> get_encountered_infosets(int);
-        void execute(std::string);
+        std::set<uint64_t> get_encountered_infosets(int);
+        void execute(Move&);
         void undo();
         bool is_player_to_move(int);
         bool is_player_in_hand(int);
         bool is_chance_node();
         int betting_round();
         int get_player_to_move();
-        std::string sample_action();
-        std::vector<std::string> get_actions();
-        std::string get_random_action();
-        std::string get_infoset(int);
-        std::string get_current_infoset();
+        Move sample_action();
+        std::vector<Move>& get_actions(std::vector<Move>&);
+        Move get_random_action();
+        uint64_t get_infoset(int);
+        uint64_t get_current_infoset();
         float get_outcome_for_player(int);
-        std::vector<std::string> get_actions_from_infoset(std::string);
-        std::vector<int> get_players();
+        std::vector<Move> get_actions_from_infoset(uint64_t);
+        int get_num_players();
 
     private:
-        char find_best_remaining_hand();
-        std::pair<char, char> card_combination_to_chars(int);
+        Cards find_best_remaining_hand();
         void draw_cards();
-        std::unordered_map<std::string, std::vector<std::string>> actions_for_infoset;
+        std::unordered_map<uint64_t, std::vector<Move>> actions_for_infoset;
 };
 
 

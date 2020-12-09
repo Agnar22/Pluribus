@@ -10,10 +10,10 @@
 
 namespace mccfr {
 
-    std::unordered_map<std::string, std::unordered_map<std::string, float>> regret, strategy;
+    std::unordered_map<uint64_t, std::unordered_map<Move, float>> regret, strategy;
 
-    std::unordered_map<std::string, std::unordered_map<std::string, float>> calculate_probabilities() {
-        std::unordered_map<std::string, std::unordered_map<std::string, float>> probabilities;
+    std::unordered_map<uint64_t, std::unordered_map<Move, float>> calculate_probabilities() {
+        std::unordered_map<uint64_t, std::unordered_map<Move, float>> probabilities;
         for (auto const [infoset, infoset_regret]:regret) {
             float sum = 0;
             for (auto const [action, action_regret]:infoset_regret) {
@@ -26,7 +26,9 @@ namespace mccfr {
         return probabilities;
     };
 
-    std::string sample_action(std::unordered_map<std::string, float>& temp_strategy) {
+
+
+    Move sample_action(std::unordered_map<Move, float>& temp_strategy) {
         float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
         float r_copy = r;
         for (auto kv:temp_strategy) {
@@ -37,19 +39,23 @@ namespace mccfr {
         throw std::runtime_error("Could not decide upon an action. the sum of strategies is lower than 1.0.");
     }
 
-    std::unordered_map<std::string, float> calculate_strategy(Game& game, int player) {
-        std::unordered_map<std::string, float> updated_strategy;
-        std::string infoset = game.get_infoset(player);
+    std::unordered_map<Move, float> calculate_strategy(Game& game, int player) {
+        std::unordered_map<Move, float> updated_strategy;
+        uint64_t infoset = game.get_infoset(player);
 
         if (!game.is_player_to_move(player)) {
             throw std::runtime_error("Calculating strategy for wrong player.");
         }
 
         float sum = 0;
-        for (std::string action:game.get_actions())
+        std::vector<Move> actions;
+        actions.reserve(MAX_MOVES);
+        actions = game.get_actions(actions);
+        for (Move action:actions) {
             sum+=std::max(regret[infoset][action], 0.0f);
-        for (std::string action:game.get_actions())
-            updated_strategy[action] = sum > 0 ? std::max(regret[infoset][action], 0.0f)/sum : 1.0f/static_cast <float>(regret[infoset].size());
+        }
+        for (Move action:actions)
+            updated_strategy[action] = sum > 0 ? std::max(regret[infoset][action], 0.0f)/sum : 1.0f/static_cast<float>(regret[infoset].size());
         return updated_strategy;
     }
 
@@ -57,21 +63,24 @@ namespace mccfr {
         if (game.is_finished() || !game.is_player_in_hand(player) || game.betting_round() > 0) {
             return;
         } else if (game.is_chance_node()) {
-            std::string action = game.sample_action();
+            Move action = game.sample_action();
             game.execute(action);
             update_strategy(game, player);
             game.undo();
         } else if (game.is_player_to_move(player)) {
-            std::string infoset = game.get_infoset(player);
+            uint64_t infoset = game.get_infoset(player);
             auto curr_strategy = calculate_strategy(game, player);
-            std::string action = sample_action(curr_strategy);
+            Move action = sample_action(curr_strategy);
             strategy[infoset][action] = strategy[infoset][action] + 1;
 
             game.execute(action);
             update_strategy(game, player);
             game.undo();
         } else {
-            for (std::string action:game.get_actions()) {
+            std::vector<Move> actions;
+            actions.reserve(MAX_MOVES);
+            actions = game.get_actions(actions);
+            for (Move action:actions) {
                 game.execute(action);
                 update_strategy(game, player);
                 game.undo();
@@ -84,26 +93,29 @@ namespace mccfr {
             return game.get_outcome_for_player(player);
         } else if (!game.is_player_in_hand(player)) {
             // TODO: it is possible that we can skip the recursion.
-            std::string action = game.get_random_action();
+            Move action = game.get_random_action();
 
             game.execute(action);
             float outcome = traverse_mccfr(game, player, prune);
             game.undo();
             return outcome;
         } else if (game.is_chance_node()) {
-            std::string action = game.sample_action();
+            Move action = game.sample_action();
 
             game.execute(action);
             float outcome = traverse_mccfr(game, player, prune);
             game.undo();
             return outcome;
         } else if (game.is_player_to_move(player)) {
-            std::string infoset = game.get_infoset(player);
+            uint64_t infoset = game.get_infoset(player);
             auto curr_strategy = calculate_strategy(game, player);
             float expected_value = 0;
-            std::unordered_map<std::string, float> outcomes;
-            std::unordered_map<std::string, bool> explored;
-            for (std::string action:game.get_actions()) {
+            std::unordered_map<Move, float> outcomes;
+            std::unordered_map<Move, bool> explored;
+            std::vector<Move> actions;
+            actions.reserve(MAX_MOVES);
+            actions = game.get_actions(actions);
+            for (Move action:actions) {
                 if (!prune || regret[infoset][action] > -300000000.0f) {
                     explored[action] = true;
                     game.execute(action);
@@ -115,14 +127,14 @@ namespace mccfr {
                     explored[action] = false;
                 }
             }
-            for (std::string action:game.get_actions()) {
+            for (Move action:actions) {
                 if (!prune || explored[action])
                     regret[infoset][action] = regret[infoset][action] + outcomes[action] - expected_value;
             }
             return expected_value;
         } else {
             auto curr_strategy = calculate_strategy(game, game.get_player_to_move());
-            std::string action = sample_action(curr_strategy);
+            Move action = sample_action(curr_strategy);
 
             game.execute(action);
             float outcome = traverse_mccfr(game, player, prune);
@@ -134,12 +146,13 @@ namespace mccfr {
 
     void mccfr_p(int timesteps, int strategy_interval, int prune_treshold, int lcfr_treshold, int disc_interval, Game& game) {
         // Optional: set all strategies and rewares to zero.
-        std::vector<int> players = game.get_players();
+        int num_players = game.get_num_players();
         for (int timestep = 0; timestep < timesteps; ++timestep){
-            for (int player:players) {
+            for (int player=0; player<num_players; ++player) {
                 game.reset_game();
-                if (timestep%strategy_interval==0)
+                if (timestep%strategy_interval==0) {
                     update_strategy(game, player);
+                }
                 if (timestep>prune_treshold) {
                     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
                     if (r < 0.05) {
@@ -153,10 +166,10 @@ namespace mccfr {
             }
             if (timestep < lcfr_treshold && timestep%disc_interval==0) {
                 float d = (static_cast <float> (timestep)/static_cast <float> (disc_interval) ) / ((static_cast <float> (timestep)/static_cast <float> (disc_interval) + 1.0f));
-                for (int player:players) {
+                for (int player=0; player<num_players; ++player) {
                     // Info: only getting encountered infosets where it is the player to act.
-                    for (std::string infoset:game.get_encountered_infosets(player)) {
-                        for (std::string action:game.get_actions_from_infoset(infoset)) {
+                    for (uint64_t infoset:game.get_encountered_infosets(player)) {
+                        for (Move action:game.get_actions_from_infoset(infoset)) {
                             regret[infoset][action] = regret[infoset][action] * d;
                             strategy[infoset][action] = strategy[infoset][action] * d;
                         }
@@ -169,9 +182,9 @@ namespace mccfr {
 
 void print_strategy() {
     for (auto const [infoset, infoset_regret]:mccfr::regret) {
-        std::cout << infoset << ": ";
+        std::cout << infoset_to_string(infoset) << ": ";
         for (auto const [action, regret]:infoset_regret) {
-            std::cout << action << " " << regret << " " << std::to_string(mccfr::strategy[infoset][action]) << " ";
+            std::cout << move_to_char[action] << " " << regret << " " << std::to_string(mccfr::strategy[infoset][action]) << " ";
         }
         std::cout << std::endl;
     }
