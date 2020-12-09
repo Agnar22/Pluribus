@@ -4,7 +4,10 @@
 [![build-and-run-tests](https://github.com/Agnar22/Pluribus/workflows/build-and-run-tests/badge.svg)](https://github.com/Agnar22/Pluribus/actions)
 
 # Roadmap
- - [X] MCCFR
+ - [ ] MCCFR
+   - [X] Implementation
+   - [ ] Optimalization
+   - [ ] Multithreading
  - [X] Two player Kuhn poker
    - [X] Environment
    - [X] Training
@@ -12,6 +15,9 @@
    - [X] Environment
    - [X] Training
  - [ ] Real-time search
+   - [ ] Implementation
+   - [ ] Optimalization
+   - [ ] Multithreading
  - [ ] No Limit texas Hold'em 2 player
    - [ ] Environment
    - [ ] Training
