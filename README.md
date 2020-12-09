@@ -6,7 +6,7 @@
 # Roadmap
  - [ ] MCCFR
    - [X] Implementation
-   - [ ] Optimalization
+   - [ ] Optimization
    - [ ] Multithreading
  - [X] Two player Kuhn poker
    - [X] Environment
@@ -16,7 +16,7 @@
    - [X] Training
  - [ ] Real-time search
    - [ ] Implementation
-   - [ ] Optimalization
+   - [ ] Optimization
    - [ ] Multithreading
  - [ ] No Limit texas Hold'em 2 player
    - [ ] Environment
