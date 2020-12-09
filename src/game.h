@@ -13,6 +13,8 @@
 #define assertm(exp, msg) assert(((void)msg, exp))
 
 constexpr int MAX_MOVE_SIZE = 2;
+constexpr int MAX_CARD_SIZE = 3;
+constexpr int MAX_MOVES = 2;
 constexpr uint32_t MOVE_MASK = 3;
 
 enum class Cards : char {
@@ -31,17 +33,17 @@ struct History {
 
     History() : history{0}, length{0}{};
 
-    History(std::string& history) : length{0} {
+    History(std::string& history) : history{0}, length{0} {
         for (char& move:history) {
-            this->history = (this->history << MAX_MOVE_SIZE) + static_cast<uint32_t>(char_to_move[move]);
+            this->history = (this->history << MAX_MOVE_SIZE) | static_cast<uint32_t>(char_to_move[move]);
             length++;
         }
         assertm(length <= 8*sizeof(this->history) / MAX_MOVE_SIZE, "Not overflow.");
     };
 
-    History(std::string&& history) : length{0} {
+    History(std::string&& history) : history{0},length{0} {
         for (char& move:history) {
-            this->history = (this->history << MAX_MOVE_SIZE) + static_cast<uint32_t>(char_to_move[move]);
+            this->history = (this->history << MAX_MOVE_SIZE) | static_cast<uint32_t>(char_to_move[move]);
             length++;
         }
         assertm(length <= 8*sizeof(this->history) / MAX_MOVE_SIZE, "Not overflow.");
