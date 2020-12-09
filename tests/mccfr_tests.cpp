@@ -18,9 +18,9 @@ TEST_F(MCCFRTest, TwoPlayerKuhnPokerOptimalStrategy) {
     float error_treshold = 0.03f;
     KuhnPoker kuhn_poker(2);
 
-    mccfr::mccfr_p(100000, 1, 20000, 1000, 20, kuhn_poker);
+    mccfr::mccfr_p(1000000, 1, 20000, 1000, 20, kuhn_poker);
     auto strategy = mccfr::calculate_probabilities();
-    float strategy_alpha = strategy["0|Q|"]["r"];
+    float strategy_alpha = strategy[to_infoset("", Cards::Q)][Move::R];
 
     ASSERT_EQ(to_infoset("", Cards::K), 1);
     ASSERT_EQ(to_infoset("R", Cards::K), 25);
@@ -28,26 +28,26 @@ TEST_F(MCCFRTest, TwoPlayerKuhnPokerOptimalStrategy) {
 
     // QK
     ASSERT_LT(strategy_alpha - 1.0f/3.0f,  0.0f);
-    ASSERT_LT(std::abs(strategy["1|K|r"]["f"] - 2.0f/3.0f), error_treshold);
-    ASSERT_LT(std::abs(strategy["1|K|c"]["c"] - 1.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("R", Cards::K)][Move::F] - 2.0f/3.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("C", Cards::K)][Move::C] - 1.0f), error_treshold);
 
     // QA
-    ASSERT_LT(std::abs(strategy["1|A|r"]["c"] - 1.0f), error_treshold);
-    ASSERT_LT(std::abs(strategy["1|A|c"]["r"] - 1.0f), error_treshold);
-    ASSERT_LT(std::abs(strategy["0|Q|cr"]["f"] - 1.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("R", Cards::A)][Move::C] - 1.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("C", Cards::A)][Move::R] - 1.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("CR", Cards::Q)][Move::F] - 1.0f), error_treshold);
 
     // KQ
-    ASSERT_LT(std::abs(strategy["0|K|"]["c"] - 1.0f), error_treshold);
-    ASSERT_LT(std::abs(strategy["1|Q|c"]["r"] - 1.0f/3.0f), error_treshold);
-    ASSERT_LT(std::abs(strategy["0|K|cr"]["f"] - (2.0f/3.0f - strategy_alpha)), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("", Cards::K)][Move::C] - 1.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("C", Cards::Q)][Move::R] - 1.0f/3.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("CR", Cards::K)][Move::F] - (2.0f/3.0f - strategy_alpha)), error_treshold);
 
     // KA
     // All situations covered above.
 
     // AQ
-    ASSERT_LT(std::abs(strategy["0|A|"]["r"] - 3.0f*strategy_alpha), error_treshold);
-    ASSERT_LT(std::abs(strategy["1|Q|r"]["f"] - 1.0f), error_treshold);
-    ASSERT_LT(std::abs(strategy["0|A|cr"]["c"] - 1.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("", Cards::A)][Move::R] - 3.0f*strategy_alpha), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("R", Cards::Q)][Move::F] - 1.0f), error_treshold);
+    ASSERT_LT(std::abs(strategy[to_infoset("CR", Cards::A)][Move::C] - 1.0f), error_treshold);
 
     // AK
     // All situations covered above.
@@ -56,27 +56,26 @@ TEST_F(MCCFRTest, TwoPlayerKuhnPokerOptimalStrategy) {
 TEST_F(MCCFRTest, ThreePlayerKuhnPokerOptimalStrategy) {
     // The optimal strategy for three player Kuhn poker is described here: https://poker.cs.ualberta.ca/publications/AAMAS13-3pkuhn.pdf
     // The variables are using the notation from the paper.
-    float error_treshold = 0.05f;
+    float error_treshold = 0.02f;
     KuhnPoker kuhn_poker(3);
 
 
-    mccfr::mccfr_p(1000000, 500, 2000000, 100000, 5000, kuhn_poker);
+    mccfr::mccfr_p(10000000, 1000, 20000000, 20000000, 10000000, kuhn_poker);
     auto strategy = mccfr::calculate_probabilities();
 
-    std::vector<char> cards = {'J', 'Q', 'K', 'A'};
+    std::vector<Cards> cards = {Cards::J, Cards::Q, Cards::K, Cards::A};
     std::vector<std::vector<std::string>> player_paths = {
-        std::vector<std::string>{"", "ccr", "crf", "crc"},
-        std::vector<std::string>{"c", "r", "ccrf", "ccrc"},
-        std::vector<std::string>{"cc", "cr", "rf", "rc"}
+        std::vector<std::string>{"", "CCR", "CRF", "CRR"},
+        std::vector<std::string>{"C", "R", "CCRF", "CCRC"},
+        std::vector<std::string>{"CC", "CR", "RF", "RC"}
     };
     std::unordered_map<std::string, float> infosets;
 
     for (int player=0; player<3; ++player)
         for (int x=0; x<player_paths[player].size(); ++x)
             for (int y=0; y<cards.size(); ++y) {
-                std::string action = player_paths[player][x].find("r") == std::string::npos ? "r":"c";
-                std::string infoset_name = std::to_string(player) + "|" + std::string(1, cards[y]) + "|" + player_paths[player][x];
-                infosets[std::string(1, 'a' + player) + std::to_string(y+1) + std::to_string(x+1)] = strategy[infoset_name][action];
+                Move action = player_paths[player][x].find("R") == std::string::npos ? Move::R : Move::C;
+                infosets[std::string(1, 'a' + player) + std::to_string(y+1) + std::to_string(x+1)] = strategy[to_infoset(player_paths[player][x], cards[y])][action];
             }
 
 
