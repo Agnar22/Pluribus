@@ -100,6 +100,9 @@ namespace calculations {
     }
 
     std::vector<int> hand_frequency(unsigned long long player_mask) {
+        /*
+            Calculates the different hands that is possible from player cards + board.
+        */
         unsigned long long player_mask_compressed = compress_hand_lossless(player_mask);
 
         if (calculations::hand_frequencies.find(player_mask_compressed) != calculations::hand_frequencies.end())
@@ -132,6 +135,9 @@ namespace calculations {
     }
 
     std::vector<unsigned long> headsup_outcomes(unsigned long long player_cards, unsigned long long board_cards) {
+        /*
+            Calculates how many opponent hands that will beat-draw-loose against the player_cards given the board cards.
+        */
         std::vector<unsigned long> outcomes(3,0);
         for (int x = 0; x < 52; ++x) {
             for (int y = 0; y < x; ++y) {

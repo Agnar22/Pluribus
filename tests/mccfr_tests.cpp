@@ -60,7 +60,7 @@ TEST_F(MCCFRTest, ThreePlayerKuhnPokerOptimalStrategy) {
     KuhnPoker kuhn_poker(3);
 
 
-    mccfr::mccfr_p(10000000, 1000, 20000000, 20000000, 10000000, kuhn_poker);
+    mccfr::mccfr_p(1000000, 1000, 20000000, 20000000, 10000000, kuhn_poker);
     auto strategy = mccfr::calculate_probabilities();
 
     std::vector<Cards> cards = {Cards::J, Cards::Q, Cards::K, Cards::A};
@@ -89,6 +89,7 @@ TEST_F(MCCFRTest, ThreePlayerKuhnPokerOptimalStrategy) {
     ASSERT_LT(std::abs(infosets["a33"] - 0.5f), error_treshold);
     ASSERT_LT(infosets["a34"], error_treshold);
     ASSERT_LT(infosets["a41"], error_treshold);
+
     // Nash equilibrium for b (player 1).
     float beta = std::max(infosets["b11"], infosets["b21"]);
     ASSERT_LT(infosets["b11"], 0.25f + error_treshold);

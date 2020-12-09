@@ -51,6 +51,7 @@ namespace mccfr {
         std::vector<Move> actions;
         actions.reserve(MAX_MOVES);
         actions = game.get_actions(actions);
+
         for (Move action:actions) {
             sum+=std::max(regret[infoset][action], 0.0f);
         }
@@ -92,7 +93,7 @@ namespace mccfr {
         if (game.is_finished()) {
             return game.get_outcome_for_player(player);
         } else if (!game.is_player_in_hand(player)) {
-            // TODO: it is possible that we can skip the recursion.
+            // TODO: It is possible that we can skip the recursion.
             Move action = game.get_random_action();
 
             game.execute(action);

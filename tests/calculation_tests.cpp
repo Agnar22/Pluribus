@@ -15,6 +15,8 @@ TEST(Calculations, LosslessCompression) {
 
 
 TEST(Calculations, SuitPermutations) {
+    calculations::load_suit_permutations();
+
     ull single = hand_test::hand_from_string("c2");
     ASSERT_EQ(4, calculations::num_suit_permutations(single));
 
