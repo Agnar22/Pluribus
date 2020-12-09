@@ -18,7 +18,7 @@ constexpr int MAX_MOVES = 2;
 constexpr uint32_t MOVE_MASK = 3;
 
 enum class Cards : char {
-    A, K, Q, J
+    A, K, Q, J, NONE
 };
 
 enum class Move : uint32_t {
