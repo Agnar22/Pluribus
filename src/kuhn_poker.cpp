@@ -22,7 +22,7 @@ KuhnPoker::KuhnPoker(int num_players) {
     card_for_player.reserve(num_players);
     cards = {Cards::A, Cards::K, Cards::Q};
     if (num_players==3)
-        cards.push_back(Cards::J);
+        cards.emplace_back(Cards::J);
     initialize_hand();
 }
 
@@ -101,11 +101,11 @@ bool KuhnPoker::is_player_to_move(int player) {
 std::vector<Move>& KuhnPoker::get_actions(std::vector<Move>& actions) {
     if (std::accumulate(has_folded.begin(), has_folded.end(),0) == players - 1)
         return actions;
-    actions.push_back(Move::C);
+    actions.emplace_back(Move::C);
     if (history.get_first_occurence(Move::R) == -1)
-        actions.push_back(Move::R);
+        actions.emplace_back(Move::R);
     else
-        actions.push_back(Move::F);
+        actions.emplace_back(Move::F);
     actions_for_infoset[get_current_infoset()] = actions;
     return actions;
 }

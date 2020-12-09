@@ -48,7 +48,7 @@ namespace mccfr {
         for (Move action:actions)
             sum+=std::max(regret[infoset][action], 0.0f);
         for (int x=0; x<actions.size(); ++x)
-            probabilities.push_back(sum > 0 ? std::max(regret[infoset][actions[x]], 0.0f)/sum : 1.0f/static_cast<float>(regret[infoset].size()));
+            probabilities.emplace_back(sum > 0 ? std::max(regret[infoset][actions[x]], 0.0f)/sum : 1.0f/static_cast<float>(regret[infoset].size()));
     }
 
     void update_strategy(Game& game, int player) {
