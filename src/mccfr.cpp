@@ -28,36 +28,27 @@ namespace mccfr {
 
 
 
-    Move sample_action(std::unordered_map<Move, float>& temp_strategy) {
+    Move sample_action(std::vector<Move>& actions, std::vector<float>& probabilities) {
         float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
         float r_copy = r;
-        for (auto kv:temp_strategy) {
-            r-=kv.second;
+        for (int x=0; x<actions.size(); ++x) {
+            r-=probabilities[x];
             if (r<=1.0e-7f)
-                return kv.first;
+                return actions[x];
         }
         throw std::runtime_error("Could not decide upon an action. the sum of strategies is lower than 1.0.");
     }
 
-    std::unordered_map<Move, float> calculate_strategy(Game& game, int player) {
-        std::unordered_map<Move, float> updated_strategy;
-        uint64_t infoset = game.get_infoset(player);
-
-        if (!game.is_player_to_move(player)) {
+    void calculate_strategy(Game& game, int player, std::vector<Move>& actions, std::vector<float>& probabilities) {
+        if (!game.is_player_to_move(player))
             throw std::runtime_error("Calculating strategy for wrong player.");
-        }
 
+        uint64_t infoset = game.get_infoset(player);
         float sum = 0;
-        std::vector<Move> actions;
-        actions.reserve(MAX_MOVES);
-        actions = game.get_actions(actions);
-
-        for (Move action:actions) {
-            sum+=std::max(regret[infoset][action], 0.0f);
-        }
         for (Move action:actions)
-            updated_strategy[action] = sum > 0 ? std::max(regret[infoset][action], 0.0f)/sum : 1.0f/static_cast<float>(regret[infoset].size());
-        return updated_strategy;
+            sum+=std::max(regret[infoset][action], 0.0f);
+        for (int x=0; x<actions.size(); ++x)
+            probabilities.push_back(sum > 0 ? std::max(regret[infoset][actions[x]], 0.0f)/sum : 1.0f/static_cast<float>(regret[infoset].size()));
     }
 
     void update_strategy(Game& game, int player) {
@@ -70,8 +61,13 @@ namespace mccfr {
             game.undo();
         } else if (game.is_player_to_move(player)) {
             uint64_t infoset = game.get_infoset(player);
-            auto curr_strategy = calculate_strategy(game, player);
-            Move action = sample_action(curr_strategy);
+            std::vector<Move> actions;
+            actions.reserve(MAX_MOVES);
+            actions = game.get_actions(actions);
+            std::vector<float> probabilities;
+            probabilities.reserve(MAX_MOVES);
+            calculate_strategy(game, player, actions, probabilities);
+            Move action = sample_action(actions, probabilities);
             strategy[infoset][action] = strategy[infoset][action] + 1;
 
             game.execute(action);
@@ -109,23 +105,26 @@ namespace mccfr {
             return outcome;
         } else if (game.is_player_to_move(player)) {
             uint64_t infoset = game.get_infoset(player);
-            auto curr_strategy = calculate_strategy(game, player);
-            float expected_value = 0;
-            std::unordered_map<Move, float> outcomes;
-            std::unordered_map<Move, bool> explored;
             std::vector<Move> actions;
             actions.reserve(MAX_MOVES);
             actions = game.get_actions(actions);
-            for (Move action:actions) {
-                if (!prune || regret[infoset][action] > -300000000.0f) {
-                    explored[action] = true;
-                    game.execute(action);
+            std::vector<float> probabilities;
+            probabilities.reserve(MAX_MOVES);
+            calculate_strategy(game, player, actions, probabilities);
+
+            float expected_value = 0;
+            std::unordered_map<Move, float> outcomes;
+            std::unordered_map<Move, bool> explored;
+            for (int x=0; x<actions.size(); ++x) {
+                if (!prune || regret[infoset][actions[x]] > -300000000.0f) {
+                    explored[actions[x]] = true;
+                    game.execute(actions[x]);
                     float outcome = traverse_mccfr(game, player, prune);
                     game.undo();
-                    expected_value += curr_strategy[action] * outcome;
-                    outcomes[action] = outcome;
+                    expected_value += probabilities[x] * outcome;
+                    outcomes[actions[x]] = outcome;
                 } else {
-                    explored[action] = false;
+                    explored[actions[x]] = false;
                 }
             }
             for (Move action:actions) {
@@ -134,8 +133,13 @@ namespace mccfr {
             }
             return expected_value;
         } else {
-            auto curr_strategy = calculate_strategy(game, game.get_player_to_move());
-            Move action = sample_action(curr_strategy);
+            std::vector<Move> actions;
+            actions.reserve(MAX_MOVES);
+            actions = game.get_actions(actions);
+            std::vector<float> probabilities;
+            probabilities.reserve(MAX_MOVES);
+            calculate_strategy(game, game.get_player_to_move(), actions, probabilities);
+            Move action = sample_action(actions, probabilities);
 
             game.execute(action);
             float outcome = traverse_mccfr(game, player, prune);
