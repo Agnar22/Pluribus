@@ -85,3 +85,11 @@ TEST(History, Assertions) {
         hist+=Move::C;
     ASSERT_DEATH(hist+=Move::C, "Not overflow.");
 }
+
+TEST(History, FirstOccurence) {
+    History hist("FCC");
+
+    ASSERT_EQ(hist.get_first_occurence(Move::F), 2);
+    ASSERT_EQ(hist.get_first_occurence(Move::C), 0);
+    ASSERT_EQ(hist.get_first_occurence(Move::R), -1);
+}

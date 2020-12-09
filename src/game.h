@@ -58,6 +58,20 @@ struct History {
         return this->length;
     };
 
+    int get_first_occurence(Move& move) {
+        for (int x=0; x<length; ++x)
+            if ((*this)[x] == move)
+                return x;
+        return -1;
+    };
+
+    int get_first_occurence(Move&& move) {
+        for (int x=0; x<length; ++x)
+            if ((*this)[x] == move)
+                return x;
+        return -1;
+    };
+
     History operator--(int times) {
         assertm(length > 0, "Not underflow.");
         int dec = times + 1;
