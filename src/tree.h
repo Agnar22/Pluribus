@@ -17,16 +17,16 @@ struct Tree {
     Tree() : children() {}
 
     int delete_tree() {
-        int num_deleted = delete_tree(0);
+        int num_deleted = delete_children(0);
         delete this;
         return num_deleted;
     }
 
-    int delete_tree(int depth){
+    int delete_children(int depth){
         int deleted_children = 0;
         for (Tree* child:children) {
             if (child != nullptr)
-                deleted_children += child->delete_tree(depth+1);
+                deleted_children += child->delete_children(depth+1);
             delete child;
             deleted_children++;
         }
