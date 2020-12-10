@@ -16,6 +16,7 @@
 constexpr int MAX_MOVE_SIZE = 2;
 constexpr int MAX_CARD_SIZE = 3;
 constexpr int MAX_MOVES = 2;
+constexpr int MAX_CARDS = 4;
 constexpr uint32_t MOVE_MASK = 3;
 constexpr uint32_t CARDS_MASK = 7;
 
