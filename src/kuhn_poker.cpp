@@ -48,27 +48,27 @@ bool KuhnPoker::is_finished() {
     return false;
 }
 
-bool KuhnPoker::is_chance_node() {
+inline bool KuhnPoker::is_chance_node() {
     return false;
 }
 
-int KuhnPoker::betting_round() {
+inline int KuhnPoker::betting_round() {
     return 0;
 }
 
-Move KuhnPoker::sample_action() {
+inline Move KuhnPoker::sample_action() {
     throw std::runtime_error("Kuhn poker cannot sample action.");
 }
 
-bool KuhnPoker::is_player_in_hand(int player) {
+inline bool KuhnPoker::is_player_in_hand(int player) {
     return !has_folded[player];
 }
 
-int KuhnPoker::get_player_to_move() {
+inline int KuhnPoker::get_player_to_move() {
     return player_to_move;
 }
 
-std::set<uint64_t> KuhnPoker::get_encountered_infosets(int player) {
+inline std::set<uint64_t> KuhnPoker::get_encountered_infosets(int player) {
     return encountered_infosets[player];
 }
 
@@ -94,7 +94,7 @@ void KuhnPoker::undo() {
         money_in_hand[player_to_move] = 1.0f;
 }
 
-bool KuhnPoker::is_player_to_move(int player) {
+inline bool KuhnPoker::is_player_to_move(int player) {
     return player == player_to_move;
 }
 
@@ -117,11 +117,11 @@ Move KuhnPoker::get_random_action() {
     return actions[rand()%actions.size()];
 }
 
-uint64_t KuhnPoker::get_infoset(int player) {
+inline uint64_t KuhnPoker::get_infoset(int player) {
     return create_infoset(history, card_for_player[player]);
 }
 
-uint64_t KuhnPoker::get_current_infoset() {
+inline uint64_t KuhnPoker::get_current_infoset() {
     return get_infoset(player_to_move);
 }
 
@@ -142,7 +142,7 @@ std::vector<Move> KuhnPoker::get_actions_from_infoset(uint64_t infoset) {
     return actions_for_infoset[infoset];
 }
 
-int KuhnPoker::get_num_players() {
+inline int KuhnPoker::get_num_players() {
     return players;
 }
 

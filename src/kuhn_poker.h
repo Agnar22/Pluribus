@@ -25,19 +25,19 @@ class KuhnPoker: public Game {
         std::set<uint64_t> get_encountered_infosets(int);
         void execute(Move&);
         void undo();
-        bool is_player_to_move(int);
-        bool is_player_in_hand(int);
-        bool is_chance_node();
-        int betting_round();
-        int get_player_to_move();
-        Move sample_action();
+        inline bool is_player_to_move(int);
+        inline bool is_player_in_hand(int);
+        inline bool is_chance_node();
+        inline int betting_round();
+        inline int get_player_to_move();
+        inline Move sample_action();
         std::vector<Move>& get_actions(std::vector<Move>&);
         Move get_random_action();
-        uint64_t get_infoset(int);
-        uint64_t get_current_infoset();
+        inline uint64_t get_infoset(int);
+        inline uint64_t get_current_infoset();
         float get_outcome_for_player(int);
         std::vector<Move> get_actions_from_infoset(uint64_t);
-        int get_num_players();
+        inline int get_num_players();
 
     private:
         Cards find_best_remaining_hand();
