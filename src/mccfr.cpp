@@ -114,23 +114,21 @@ namespace mccfr {
             calculate_strategy(game, player, actions, probabilities);
 
             float expected_value = 0;
-            std::unordered_map<Move, float> outcomes;
-            std::unordered_map<Move, bool> explored;
+            std::vector<float> outcomes(actions.size(), 0.0f);
+            std::vector<bool> explored(actions.size(), false);
             for (int x=0; x<actions.size(); ++x) {
                 if (!prune || regret[infoset][actions[x]] > -300000000.0f) {
-                    explored[actions[x]] = true;
+                    explored[x] = true;
                     game.execute(actions[x]);
                     float outcome = traverse_mccfr(game, player, prune);
                     game.undo();
                     expected_value += probabilities[x] * outcome;
-                    outcomes[actions[x]] = outcome;
-                } else {
-                    explored[actions[x]] = false;
+                    outcomes[x] = outcome;
                 }
             }
-            for (Move action:actions) {
-                if (!prune || explored[action])
-                    regret[infoset][action] = regret[infoset][action] + outcomes[action] - expected_value;
+            for (int x=0; x<actions.size(); ++x) {
+                if (!prune || explored[x])
+                    regret[infoset][actions[x]] = regret[infoset][actions[x]] + outcomes[x] - expected_value;
             }
             return expected_value;
         } else {

@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 project(Pluribus)
 
 enable_testing()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -pthread -lpthread -Ofast -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -pthread -lpthread -O3 -march=native")
 
 
 set(Boost_USE_STATIC_LIBS OFF)
