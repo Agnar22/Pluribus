@@ -1,4 +1,4 @@
-add_library(calculations_lib calculations.cpp calculations.h)
+add_library(calculations_lib calculations.cpp calculations.h ../lib/robin_hood.h)
 add_library(holdem_lib holdem.cpp holdem.h)
 add_library(card_lib card_deck.cpp card_deck.h)
 add_library(kuhn_poker_lib game.cpp game.h kuhn_poker.cpp kuhn_poker.h)

@@ -6,11 +6,12 @@
 #include <utility>
 #include <string>
 #include <algorithm>
+#include "../lib/robin_hood.h"
 
 
 namespace mccfr {
 
-    std::unordered_map<uint64_t, std::unordered_map<Move, float>> regret, strategy;
+    robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> regret, strategy;
 
     std::unordered_map<uint64_t, std::unordered_map<Move, float>> calculate_probabilities() {
         std::unordered_map<uint64_t, std::unordered_map<Move, float>> probabilities;
