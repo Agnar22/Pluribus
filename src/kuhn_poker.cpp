@@ -117,6 +117,10 @@ Move KuhnPoker::get_random_action() {
     return actions[rand()%actions.size()];
 }
 
+Cards KuhnPoker::get_card(int player) {
+    return card_for_player[player];
+}
+
 inline uint64_t KuhnPoker::get_infoset(int player) {
     return create_infoset(history, card_for_player[player]);
 }
@@ -163,3 +167,44 @@ void KuhnPoker::draw_cards() {
 }
 
 
+///*
+//void play_khun_poker(int iterations, bool verbose){
+//    KuhnPoker game;
+//    int num_won = 0;
+//    for (int x=0; x<iterations; ++x) {
+//        if (verbose) {
+//            std::cout << std::endl << std::endl << "Starting game" << std::endl;
+//            std::cout << game.card_for_player[0] << " " << game.card_for_player[1] << std::endl;
+//        }
+//        while (!game.is_finished()) {
+//            if (verbose) {
+//                std::cout << "Possible actions: ";
+//                for (std::string action:game.get_actions())
+//                    std::cout << action << " ";
+//                std::cout << std::endl << "Move:";
+//                std::string move;
+//                std::cin >> move;
+//                game.execute(move);
+//                std::cout << "In for: " << game.money_in_hand[0] << " " << game.money_in_hand[1] << std::endl;
+//            } else {
+//                game.execute(game.get_random_action());
+//            }
+//
+//        }
+//        if (verbose)
+//            std::cout << "Game over. Outcome: " << game.get_outcome_for_player(0) << " " << game.get_outcome_for_player(1) << std::endl;
+//        num_won += game.get_outcome_for_player(0) > 0.0f ? 1:0;
+//        game.initialize_hand();
+//    }
+//    std::cout << "Won: " << num_won << std::endl;
+//}
+//
+//int main(){
+//    KuhnPoker game;
+//    
+//    auto start = std::chrono::high_resolution_clock::now();
+//    play_khun_poker(10000, false);
+//    auto stop = std::chrono::high_resolution_clock::now();
+//    std::cout << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << std::endl;
+//}
+//*/

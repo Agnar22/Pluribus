@@ -137,6 +137,7 @@ class Game {
         virtual Move get_random_action() {};
         virtual inline uint64_t get_infoset(int) {};
         virtual inline uint64_t get_current_infoset() {};
+        virtual Cards get_card(int) {};
         virtual float get_outcome_for_player(int) {};
         virtual std::vector<Move> get_actions_from_infoset(uint64_t) {};
         virtual int get_num_players() {};

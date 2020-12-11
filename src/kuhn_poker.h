@@ -33,6 +33,7 @@ class KuhnPoker: public Game {
         inline Move sample_action();
         std::vector<Move>& get_actions(std::vector<Move>&);
         Move get_random_action();
+        Cards get_card(int);
         inline uint64_t get_infoset(int);
         inline uint64_t get_current_infoset();
         float get_outcome_for_player(int);

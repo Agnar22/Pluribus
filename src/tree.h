@@ -11,6 +11,7 @@ typedef std::underlying_type<Move>::type move_type;
 struct Tree {
     int num;
     Tree* children[MAX_MOVES];
+    std::vector<Move> actions;
     float infoset_regret[MAX_CARDS][MAX_MOVES];
     float infoset_strategy[MAX_CARDS][MAX_MOVES];
 
@@ -33,6 +34,10 @@ struct Tree {
         return deleted_children;
     }
 
+    std::vector<Move>& get_actions() {
+        return actions;
+    }
+
     inline float get_regret(Cards card, Move move) {
         return infoset_regret[static_cast<cards_type>(card)][static_cast<move_type>(move)];
     }
@@ -47,6 +52,10 @@ struct Tree {
 
     inline void set_strategy(Cards card, Move move, float strategy) {
         infoset_strategy[static_cast<cards_type>(card)][static_cast<move_type>(move)] = strategy;
+    }
+
+    Tree* get_child(Move action) {
+        return get_child((int) action);
     }
 
     Tree* get_child(int move) {
