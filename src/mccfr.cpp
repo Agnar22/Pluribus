@@ -2,7 +2,6 @@
 #include "kuhn_poker.h"
 #include <vector>
 #include <stdlib.h>
-#include <unordered_map>
 #include <utility>
 #include <string>
 #include <algorithm>
@@ -13,8 +12,8 @@ namespace mccfr {
 
     robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> regret, strategy;
 
-    std::unordered_map<uint64_t, std::unordered_map<Move, float>> calculate_probabilities() {
-        std::unordered_map<uint64_t, std::unordered_map<Move, float>> probabilities;
+    robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> calculate_probabilities() {
+        robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> probabilities;
         for (auto const [infoset, infoset_regret]:regret) {
             float sum = 0;
             for (auto const [action, action_regret]:infoset_regret) {
