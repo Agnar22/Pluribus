@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "../lib/robin_hood.h"
 
-namespace cfr {
+namespace lcfr {
 
     robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> strategy_profile, regret, cumulative_strategy;
 
@@ -32,14 +32,14 @@ namespace cfr {
             probabilities[x] = (sum>0.0f) ? std::max(regret[infoset][actions[x]], 0.0f)/sum : 1.0f/static_cast<float>(actions.size());
     }
 
-    float cfr (Game& game, int player, int timestep, std::vector<float>& player_reach_prob) {
+    float lcfr (Game& game, int player, int timestep, std::vector<float>& player_reach_prob) {
         if (game.is_finished()) {
             //std::cout << infoset_to_string(game.get_infoset(0)) << " " << infoset_to_string(game.get_infoset(1)) << " " << player << " " << game.get_outcome_for_player(player) << std::endl;
             return game.get_outcome_for_player(player);
         } else if (game.is_chance_node()) {
             Move action = game.sample_action();
             game.execute(action);
-            float outcome = cfr(game, player, timestep, player_reach_prob);
+            float outcome = lcfr(game, player, timestep, player_reach_prob);
             game.undo();
             return outcome;
         }
@@ -49,17 +49,17 @@ namespace cfr {
         std::vector<Move> actions;
         actions.reserve(MAX_MOVES);
         game.get_actions(actions);
-        std::vector<float> cfr_value(actions.size(), 0.0f);
+        std::vector<float> lcfr_value(actions.size(), 0.0f);
         std::vector<float> infoset_strategy(actions.size(), 0.0f);
         calculate_strategy(game, infoset, infoset_strategy);
         for (int x=0; x<actions.size(); ++x) {
             float prior_player_reach_prob = player_reach_prob[current_player];
             player_reach_prob[current_player] *= infoset_strategy[x];
             game.execute(actions[x]);
-            float outcome = cfr(game, player, timestep, player_reach_prob);
+            float outcome = lcfr(game, player, timestep, player_reach_prob);
             game.undo();
             player_reach_prob[current_player] = prior_player_reach_prob;
-            cfr_value[x] = outcome;
+            lcfr_value[x] = outcome;
             expected_value += infoset_strategy[x] * outcome;
         }
         if (player == current_player) {
@@ -67,9 +67,12 @@ namespace cfr {
             for (int x=0; x<game.get_num_players(); ++x)
                 if (x!=player)
                     reach_prob *= player_reach_prob[x];
+            float disc = ((float)timestep + 1)/(float)(timestep + 2);
             for (int x=0; x<actions.size(); ++x) {
-                regret[game.get_current_infoset()][actions[x]] = regret[game.get_current_infoset()][actions[x]] + (reach_prob) * (cfr_value[x] - expected_value);
+                regret[game.get_current_infoset()][actions[x]] += reach_prob * (lcfr_value[x] - expected_value);
+                regret[game.get_current_infoset()][actions[x]] *= disc;
                 cumulative_strategy[game.get_current_infoset()][actions[x]] += player_reach_prob[player] * infoset_strategy[x];
+                cumulative_strategy[game.get_current_infoset()][actions[x]] *= disc;
             }
 
             std::vector<float> updated_strategy(actions.size(), 0.0f);
@@ -85,7 +88,7 @@ namespace cfr {
             for (int player=0; player<game.get_num_players(); ++player) {
                 game.reset_game();
                 std::vector<float> player_reach_prob(game.get_num_players(), 1.0f);
-                cfr(game, player, timestep, player_reach_prob);
+                lcfr(game, player, timestep, player_reach_prob);
             }
         }
     }
