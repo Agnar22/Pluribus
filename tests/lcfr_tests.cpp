@@ -15,7 +15,7 @@ struct LCFRTest: public testing::Test {
 TEST_F(LCFRTest, TwoPlayerKuhnPokerOptimalStrategy) {
     // The optimal strategy for two player Kuhn poker is described here: https://en.wikipedia.org/wiki/Kuhn_poker#Optimal_strategy
     KuhnPoker kuhn_poker(2);
-    int timesteps = 40000;
+    int timesteps = 200000;
     float error_treshold = 0.03f;
 
     lcfr::search(timesteps, kuhn_poker);
