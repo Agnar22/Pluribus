@@ -28,7 +28,7 @@ TEST_F(MCCFRTest, ThreePlayerKuhnPokerOptimalStrategy) {
     KuhnPoker kuhn_poker(3);
     float error_treshold = 0.03f;
 
-    mccfr::mccfr_p(3000000, 1000, 20000000, 20000000, 10000000, kuhn_poker);
+    mccfr::mccfr_p(10000000, 1000, 20000000, 20000000, 10000000, kuhn_poker);
     auto strategy = change_notation(mccfr::calculate_probabilities());
 
     ASSERT_NO_THROW(test_three_player_kuhn_poker(error_treshold, strategy));

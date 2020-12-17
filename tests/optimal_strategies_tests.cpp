@@ -69,9 +69,18 @@ bool test_three_player_kuhn_poker(float error_treshold, robin_hood::unordered_ma
     assert(strategy["a41"] < error_treshold);
 
     // Nash equilibrium for b (player 1).
+    float strategy_treshold = 0.02f;
     float beta = std::max(strategy["b11"], strategy["b21"]);
-    assert(strategy["b11"] < 0.25f + error_treshold);
-    assert(strategy["b21"] < std::min(strategy["b11"], 0.5f - 2.0f*strategy["b11"]) + error_treshold);
+    if (strategy["c11"] < strategy_treshold) {
+        assert(strategy["b11"] < strategy["b21"] + error_treshold);
+        assert(strategy["b21"] < 0.25f + error_treshold);
+    } else if (strategy["c11"] > 0.5f - strategy_treshold) {
+        assert(strategy["b11"] < 0.25f + error_treshold);
+        assert(strategy["b21"] < std::min(strategy["b11"], 0.5f - 2.0f*strategy["b11"]) + error_treshold);
+    } else {
+        assert(strategy["b11"] < 0.25f + error_treshold);
+        assert(std::abs(strategy["b21"] - strategy["b11"]) < error_treshold);
+    }
     assert(strategy["b22"] < error_treshold);
     assert(strategy["b23"] < std::max(0.0f, (strategy["b11"]-strategy["b21"]) / (2.0f*(1.0f-strategy["b21"]))) + error_treshold);
     assert(strategy["b31"] < error_treshold);
