@@ -6,7 +6,7 @@
 
 namespace lcfr {
 
-    robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> strategy_profile, regret, cumulative_strategy;
+    robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> regret, cumulative_strategy;
 
     robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> calculate_cumulative_strategy() {
         robin_hood::unordered_map<uint64_t, robin_hood::unordered_map<Move, float>> strategy;
@@ -74,11 +74,6 @@ namespace lcfr {
                 cumulative_strategy[game.get_current_infoset()][actions[x]] += player_reach_prob[player] * infoset_strategy[x];
                 cumulative_strategy[game.get_current_infoset()][actions[x]] *= disc;
             }
-
-            std::vector<float> updated_strategy(actions.size(), 0.0f);
-            calculate_strategy(game, infoset, updated_strategy);
-            for (int x=0; x<actions.size(); ++x)
-                strategy_profile[infoset][actions[x]] = updated_strategy[x];
         }
         return expected_value;
     }
