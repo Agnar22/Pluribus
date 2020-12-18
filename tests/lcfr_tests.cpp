@@ -28,7 +28,7 @@ TEST_F(LCFRTest, ThreePlayerKuhnPokerOptimalStrategy) {
     // The optimal strategy for three player Kuhn poker is described here: https://poker.cs.ualberta.ca/publications/AAMAS13-3pkuhn.pdf
     // The variables are using the notation from the paper.
     KuhnPoker kuhn_poker(3);
-    int timesteps = 10000000;
+    int timesteps = 5000000;
     float error_treshold = 0.03f;
 
     lcfr::search(timesteps, kuhn_poker);
