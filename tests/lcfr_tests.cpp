@@ -7,7 +7,6 @@ struct LCFRTest: public testing::Test {
     };
     ~LCFRTest() {
         lcfr::regret.clear();
-        lcfr::strategy_profile.clear();
         lcfr::cumulative_strategy.clear();
     };
 };
