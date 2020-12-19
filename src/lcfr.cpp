@@ -32,14 +32,14 @@ namespace lcfr {
             probabilities[x] = (sum>0.0f) ? std::max(regret[infoset][actions[x]], 0.0f)/sum : 1.0f/static_cast<float>(actions.size());
     }
 
-    float lcfr (Game& game, int player, int timestep, std::vector<float>& player_reach_prob) {
+    float lcfr (Game& game, int player, int timestep, std::vector<float>& player_reach_prob, double pos_pow, double neg_pow, double strat_pow) {
         if (game.is_finished()) {
             //std::cout << infoset_to_string(game.get_infoset(0)) << " " << infoset_to_string(game.get_infoset(1)) << " " << player << " " << game.get_outcome_for_player(player) << std::endl;
             return game.get_outcome_for_player(player);
         } else if (game.is_chance_node()) {
             Move action = game.sample_action();
             game.execute(action);
-            float outcome = lcfr(game, player, timestep, player_reach_prob);
+            float outcome = lcfr(game, player, timestep, player_reach_prob, pos_pow, neg_pow, strat_pow);
             game.undo();
             return outcome;
         }
@@ -56,7 +56,7 @@ namespace lcfr {
             float prior_player_reach_prob = player_reach_prob[current_player];
             player_reach_prob[current_player] *= infoset_strategy[x];
             game.execute(actions[x]);
-            float outcome = lcfr(game, player, timestep, player_reach_prob);
+            float outcome = lcfr(game, player, timestep, player_reach_prob, pos_pow, neg_pow, strat_pow);
             game.undo();
             player_reach_prob[current_player] = prior_player_reach_prob;
             lcfr_value[x] = outcome;
@@ -67,12 +67,14 @@ namespace lcfr {
             for (int x=0; x<game.get_num_players(); ++x)
                 if (x!=player)
                     reach_prob *= player_reach_prob[x];
-            float disc = ((float)timestep + 1)/(float)(timestep + 2);
+            double pos_disc = std::pow((double)(timestep + 1), pos_pow)/(std::pow((double)(timestep + 1), pos_pow) + 1.0);
+            double neg_disc = std::pow((double)(timestep + 1), neg_pow)/(std::pow((double)(timestep + 1), neg_pow) + 1.0);
+            double strat_disc = std::pow((double)(timestep + 1)/(double)(timestep + 2), strat_pow);
             for (int x=0; x<actions.size(); ++x) {
-                regret[game.get_current_infoset()][actions[x]] += reach_prob * (lcfr_value[x] - expected_value);
-                regret[game.get_current_infoset()][actions[x]] *= disc;
-                cumulative_strategy[game.get_current_infoset()][actions[x]] += player_reach_prob[player] * infoset_strategy[x];
-                cumulative_strategy[game.get_current_infoset()][actions[x]] *= disc;
+                regret[infoset][actions[x]] += reach_prob * (lcfr_value[x] - expected_value);
+                regret[infoset][actions[x]]*= regret[infoset][actions[x]] > 0.0f ? pos_disc:neg_disc;
+                cumulative_strategy[infoset][actions[x]] += player_reach_prob[player] * infoset_strategy[x];
+                cumulative_strategy[infoset][actions[x]] *= strat_disc;
             }
         }
         return expected_value;
@@ -83,7 +85,7 @@ namespace lcfr {
             for (int player=0; player<game.get_num_players(); ++player) {
                 game.reset_game();
                 std::vector<float> player_reach_prob(game.get_num_players(), 1.0f);
-                lcfr(game, player, timestep, player_reach_prob);
+                lcfr(game, player, timestep, player_reach_prob, 1.5, 0.5, 3.0);
             }
         }
     }
