@@ -20,11 +20,8 @@ namespace lcfr {
         return strategy;
     }
 
-    void calculate_strategy(Game& game, uint64_t infoset, std::vector<float>& probabilities) {
+    void calculate_strategy(Game& game, std::vector<Move>& actions, uint64_t infoset, std::vector<float>& probabilities) {
         float sum=0.0f;
-        std::vector<Move> actions;
-        actions.reserve(MAX_MOVES);
-        game.get_actions(actions);
         for (int x=0; x<actions.size(); ++x)
             sum += std::max(regret[infoset][actions[x]], 0.0f);
         for (int x=0; x<actions.size(); ++x)
@@ -51,7 +48,7 @@ namespace lcfr {
         game.get_actions(actions);
         std::vector<float> lcfr_value(actions.size(), 0.0f);
         std::vector<float> infoset_strategy(actions.size(), 0.0f);
-        calculate_strategy(game, infoset, infoset_strategy);
+        calculate_strategy(game, actions, infoset, infoset_strategy);
         for (int x=0; x<actions.size(); ++x) {
             float prior_player_reach_prob = player_reach_prob[current_player];
             player_reach_prob[current_player] *= infoset_strategy[x];
